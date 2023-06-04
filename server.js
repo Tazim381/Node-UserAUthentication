@@ -69,18 +69,21 @@ app.post("/users", async(req, res) => {
   
 });
 
-app.put("/users/:id", (req, res) => {
+app.put("/users/:id", async(req, res) => {
+
+  try{
   const id = req.params.id
   const body= req.body
-  const user = users.find((user)=> user.id== id)
+  const user =await  User.findByIdAndUpdate(id,body,{new:true})
   if(user) {
-        user.fname= body.fname
-        user.lname =body.lname
         res.json(user)
   }else{
     res.status(404).json({message:'user not found'})
   }
+  }catch(error) {
+    res.status(500).json({message:"update e jhamela hoitese"})
   }
+}
 );
 
 app.delete("/users/:id",( req, res) =>{
