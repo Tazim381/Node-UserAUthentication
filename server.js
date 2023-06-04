@@ -1,10 +1,31 @@
 require('dotenv').config()
+const mongoose = require('mongoose')
 const express = require("express");
 const app = express();
-const port = process.env.PORT
+const { Schema } = mongoose;
+//env file theke ansi ejnno ante hoise
 var bodyParser = require("body-parser");
 
+const port = process.env.PORT
+const blogSchema = new Schema({
+  fname: String, // String is shorthand for {type: String}
+  lname: String,
+  email: String
+});
+const Blog = mongoose.model('Blog', blogSchema);
+
 app.use(bodyParser.json());
+
+const uri = process.env.MONGODB_URI
+mongoose.connect(uri,{useNewUrlParser:true})
+
+mongoose.connection.on('connected', ()=>{
+  console.log("successfully connected")
+})
+
+mongoose.connection.on('error', ()=>{
+  console.log("successfully connected")
+})
 
 const users = [];
 let id = 0;
