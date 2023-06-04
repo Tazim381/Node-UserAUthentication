@@ -86,15 +86,20 @@ app.put("/users/:id", async(req, res) => {
 }
 );
 
-app.delete("/users/:id",( req, res) =>{
+app.delete("/users/:id",async( req, res) =>{
 
+  try{
   const id = req.params.id;
-  const userIndex = users.findIndex((user)=> user.id== id)
-  if(userIndex) {
-    users.splice(userIndex,1);
-    res.json(users)
+  const user = await User.findByIdAndDelete(id)
+  if(user) {
+    res.status(201).json(user);
   }
-
+  else{
+    res.status(404).json({message:'user not found'})
+  }
+}catch(error) {
+  res.status(500).json({message:"delete e jhamela hoise"})
+}
 })
 
 app.listen(port, () => {
