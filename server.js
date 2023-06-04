@@ -7,11 +7,14 @@ const { Schema } = mongoose;
 var bodyParser = require("body-parser");
 
 const port = process.env.PORT
+
+//create schema for db
 const blogSchema = new Schema({
   fname: String, // String is shorthand for {type: String}
   lname: String,
   email: String
 });
+//create model 
 const User = mongoose.model('User', blogSchema);
 
 app.use(bodyParser.json());
@@ -27,20 +30,29 @@ mongoose.connection.on('error', ()=>{
   console.log("successfully connected")
 })
 
-const users = [];
-let id = 0;
-app.get("/", (req, res) => {
-  res.status(200).json(users);
+app.get("/users",async(req, res) => {
+  try{
+    const users = await User.find()
+    res.status(200).json(users);
+
+  }catch(error) {
+     res.status(500).json({message:"paoa jy ni"})
+  }
 });
 
-app.get("/users/:id", (req, res) => {
-  const id = req.params.id
-  const user= users.find((user) => user.id == id)
-  if(user) {
-    res.json(user)
-  } else {
-    res.status(404).json({message:'user not found'})
+app.get("/users/:id", async(req, res) => {
+  try{
+    const id = req.params.id
+    const user= await User.findById(id)
+    if(user) {
+      res.json(user)
+    } else {
+      res.status(404).json({message:'user not found'})
+    }
+  } catch(error){
+    res.status(500).json({message:"id dea khuje paoa jyni"})
   }
+  
     
 });
 
