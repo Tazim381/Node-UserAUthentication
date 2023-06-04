@@ -12,7 +12,7 @@ const blogSchema = new Schema({
   lname: String,
   email: String
 });
-const Blog = mongoose.model('Blog', blogSchema);
+const User = mongoose.model('User', blogSchema);
 
 app.use(bodyParser.json());
 
@@ -44,11 +44,16 @@ app.get("/users/:id", (req, res) => {
     
 });
 
-app.post("/", (req, res) => {
-  const user = req.body;
-  user.id = id++
-  users.push(user);
+app.post("/users", async(req, res) => {
+  
+  try{
+    const user = new User(req.body);
+  await user.save()
   res.status(201).json(user);
+  }  catch(error) {
+    console.log(error)
+    res.status(500).json({message:"can't get user from postman"})
+  }
   
 });
 
