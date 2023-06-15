@@ -12,3 +12,5 @@ Login
 find user by request email value
 if found compare passwords
 passwords good send JSON Web Token
+
+Json web token dea authorizatio kora hoise 

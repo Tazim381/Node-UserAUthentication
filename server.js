@@ -43,7 +43,29 @@ app.get("/users",async(req, res) => {
   }
 });
 
-app.get("/users/:id", async(req, res) => {
+
+//middlewire to authenticate JWT access token
+
+const authenticateToken = (req,res,next) => {
+
+  const authHeader = req.headers.authorization
+  const token = authHeader && authHeader.split(' ')[1]
+  if(!token) {
+    res.status(401).json({message:"unAuthorized user"})
+    return
+  } else {
+    jwt.verify(token,process.env.JWT_SECRET,(error,user) =>{
+      if(error) {
+        res.status(401).json({message:"unAuthorized user"})
+      } else {
+        req.user = user
+        next()
+      }
+    })
+  }
+}
+
+app.get("/users/:id", authenticateToken,async(req, res) => {
   try{
     const id = req.params.id 
     const user= await User.findById(id)
@@ -106,26 +128,6 @@ app.post("/users/login",async(req,res) =>{
   }
 })
 
-//middlewire to authenticate JWT access token
-
-const authenticateToken = (req,res,next) => {
-
-  const authHeader = req.headers.authorization
-  const token = authHeader && authHeader.split(' ')[1]
-  if(!token) {
-    res.status(401).json({message:"unAuthorized user"})
-    return
-  } else {
-    jwt.verify(token,process.env.JWT_SECRET,(error,user) =>{
-      if(error) {
-        res.status(401).json({message:"unAuthorized user"})
-      } else {
-        req.user = user
-        next()
-      }
-    })
-  }
-}
 
 app.get('/profile',authenticateToken,async(req,res) =>{
   try{
