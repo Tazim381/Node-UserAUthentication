@@ -116,7 +116,7 @@ app.post("/users/login",async(req,res) =>{
         res.status(401).json({message:"password invalid"})
       } else {
         //generate token
-          const token = jwt.sign({email:user.email, id:user._id},process.env.JWT_SECRET)
+          const token = jwt.sign({email:user.email, id:user._id},process.env.JWT_SECRET,{expiresIn:'2m'})
           const userObj = user.toJSON()
           userObj['token'] = token
           res.status(201).json(userObj);   
